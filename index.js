@@ -22,42 +22,12 @@ async function run() {
 
     const db = client.db("portfolio");
     const usersCollection = db.collection("admin");
+    const skillsCollection = db.collection("skills");
+    const projectCollection = db.collection("projects");
+    const blogsCollection = db.collection("blogs");
 
-    // User Registration
-    // app.post("/api/v1/register", async (req, res) => {
-    //   const { name, email, password, role } = req.body;
-
-    //   // Check if email already exists
-    //   const existingUser = await usersCollection.findOne({ email });
-    //   if (existingUser) {
-    //     return res.status(400).json({
-    //       success: false,
-    //       message: "User already exists",
-    //     });
-    //   }
-
-    //   // Hash the password
-    //   const hashedPassword = await bcrypt.hash(password, 10);
-
-    //   // Insert user into the database
-    //   await usersCollection.insertOne({
-    //     name,
-    //     email,
-    //     role,
-    //     password: hashedPassword,
-    //   });
-
-    //   res.status(201).json({
-    //     success: true,
-    //     message: "User registered successfully",
-    //   });
-    // });
-
-    // User Login
     app.post("/api/v1/login", async (req, res) => {
       const { email, password } = req.body;
-
-      // Find user by email
       const user = await usersCollection.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
@@ -72,6 +42,46 @@ async function run() {
         message: "Login successful",
         email: req.body.email,
       });
+    });
+
+    app.post("/api/v1/add-skill", async (req, res) => {
+      const body = req.body;
+      await skillsCollection.insertOne(body);
+      res.status(201).json({
+        success: true,
+        message: "skill added successfully",
+      });
+    });
+
+    app.get("/api/v1/skills", async (req, res) => {
+      const result = await skillsCollection.find().toArray();
+      res.send(result);
+    });
+    app.post("/api/v1/add-project", async (req, res) => {
+      const body = req.body;
+      await projectCollection.insertOne(body);
+      res.status(201).json({
+        success: true,
+        message: "project added successfully",
+      });
+    });
+
+    app.get("/api/v1/projects", async (req, res) => {
+      const result = await projectCollection.find().toArray();
+      res.send(result);
+    });
+    app.post("/api/v1/add-blog", async (req, res) => {
+      const body = req.body;
+      await blogsCollection.insertOne(body);
+      res.status(201).json({
+        success: true,
+        message: "blog added successfully",
+      });
+    });
+
+    app.get("/api/v1/blogs", async (req, res) => {
+      const result = await blogsCollection.find().toArray();
+      res.send(result);
     });
 
     // Start the server
